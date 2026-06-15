@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TaskFlow AI — by Anish Inspires</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="l-tag">Premium Productivity Suite</div>
+  <div class="l-logo">TaskFlow AI</div>
+  <div class="l-track"><div class="l-fill"></div></div>
+  <div class="l-tag" style="letter-spacing:2px">BY ANISH INSPIRES</div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="overlay" id="taskModal">
+  <div class="modal">
+    <div class="mhd">
+      <div class="mhd-t" id="modalTitle">New Task</div>
+      <button class="mclose" onclick="closeModal('taskModal')">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="fr"><label class="fl">Task Title</label><input class="fi" id="fi-title" placeholder="What needs to be done?"></div>
+      <div class="fr"><label class="fl">Notes</label><textarea class="ft" id="fi-notes" placeholder="Add context or details..."></textarea></div>
+      <div class="fgrid">
+        <div><label class="fl">Priority</label>
+          <select class="fs" id="fi-priority">
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+        <div><label class="fl">Category</label>
+          <select class="fs" id="fi-cat">
+            <option value="Work">Work</option>
+            <option value="Personal">Personal</option>
+            <option value="Health">Health</option>
+            <option value="Learning">Learning</option>
+          </select>
+        </div>
+      </div>
+      <div class="fr"><label class="fl">Due Date</label><input class="fi" id="fi-due" type="date"></div>
+      <div class="fr" style="margin-bottom:0">
+        <label class="fl">Subtasks</label>
+        <div id="sub-inputs"></div>
+        <button class="add-sub" onclick="addSubInput()">
+          <svg viewBox="0 0 14 14" style="width:11px;height:11px" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M7 2v10M2 7h10"/></svg>
+          Add Subtask
+        </button>
+      </div>
+    </div>
+    <div class="mft">
+      <button class="btn-cancel" onclick="closeModal('taskModal')">Cancel</button>
+      <button class="btn-save" onclick="saveTask()">
+        <svg viewBox="0 0 14 14"><path d="M2 7l3.5 3.5 6.5-6"/></svg>
+        Save Task
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div class="overlay" id="aboutModal">
+  <div class="modal">
+    <div class="mhd">
+      <div class="mhd-t">About TaskFlow AI</div>
+      <button class="mclose" onclick="closeModal('aboutModal')">✕</button>
+    </div>
+    <div class="mbody">
+      <div class="ab-logo">TaskFlow<em>AI</em></div>
+      <span class="ab-ver">Version 4.0 — Premium</span>
+      <div class="ab-desc">A world-class productivity suite for high-performance creators. AI task generation, Pomodoro timer, focus mode, streaks, achievements, and full analytics — offline-first, no backend required.</div>
+      <div class="ab-div"></div>
+      <div class="ab-crl">Built with AI by</div>
+      <div class="ab-crn">Anish Wani</div>
+      <div class="ab-crs">AI Developer &amp; Content Creator &nbsp;·&nbsp; Anish Inspires &nbsp;·&nbsp; Ulhasnagar, Maharashtra</div>
+      <div class="slinks">
+        <a class="sl" href="https://github.com/AnishCodes-99" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>GitHub
+        </a>
+        <a class="sl" href="https://www.linkedin.com/in/anish-wani-091071374" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn
+        </a>
+        <a class="sl" href="https://www.youtube.com/@AnishWani_1" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" style="fill:#fff;stroke:none"/></svg>YouTube
+        </a>
+        <a class="sl" href="https://www.instagram.com/anish_inspires" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>Instagram
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOCUS OVERLAY -->
+<div class="focus-ov" id="focusOv">
+  <button class="ib f-exit" onclick="exitFocus()"
+    style="width:auto;padding:0 14px;gap:6px;font-family:'Montserrat',sans-serif;font-size:11.5px;font-weight:700">
+    <svg viewBox="0 0 14 14" style="width:13px;height:13px"><path d="M2 2l10 10M12 2L2 12"/></svg>
+    Exit Focus
+  </button>
+  <div class="f-lbl">Focus Session</div>
+  <div class="f-time"><span id="fM">25</span><em>:</em><span id="fS">00</span></div>
+  <div class="f-task-txt" id="fTask">Select a task to focus on</div>
+  <div class="f-ctrls">
+    <button class="btn-new" onclick="togglePomo()" id="fPomoBtn">Start Timer</button>
+    <button class="btn-cancel" onclick="exitFocus()">Done</button>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sb-brand">
+      <div class="sb-brand-icon">
+        <svg viewBox="0 0 16 16"><path d="M2 4h12M2 8h8M2 12h10"/></svg>
+      </div>
+      <div class="sb-brand-name">Task<em>Flow</em></div>
+
+      <!-- Hamburger / toggle -->
+      <button class="sb-hamburger" id="sbHamburger" onclick="toggleSidebar()" title="Toggle sidebar">
+        <div class="hb">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+    </div>
+
+    <div class="sb-scroll">
+
+      <div class="sb-sec">
+        <div class="sb-sec-label">Workspace</div>
+
+        <div class="ni on" id="nav-tasks"
+          data-label="Tasks"
+          onclick="goView('tasks', this)">
+          <svg class="ni-icon" viewBox="0 0 18 18">
+            <rect x="2" y="3" width="14" height="12" rx="2"/>
+            <path d="M5 7h8M5 10h5"/>
+          </svg>
+          <span class="ni-label">Tasks</span>
+          <span class="ni-badge" id="sb-cnt">0</span>
+        </div>
+
+        <div class="ni" id="nav-dashboard"
+          data-label="Dashboard"
+          onclick="goView('dashboard', this)">
+          <svg class="ni-icon" viewBox="0 0 18 18">
+            <rect x="2" y="2" width="6" height="6" rx="1.5"/>
+            <rect x="10" y="2" width="6" height="6" rx="1.5"/>
+            <rect x="2" y="10" width="6" height="6" rx="1.5"/>
+            <rect x="10" y="10" width="6" height="6" rx="1.5"/>
+          </svg>
+          <span class="ni-label">Dashboard</span>
+        </div>
+
+        <div class="ni" id="nav-insights"
+          data-label="Insights"
+          onclick="goView('insights', this)">
+          <svg class="ni-icon" viewBox="0 0 18 18">
+            <path d="M2 14l4-5 4 3 4-7"/>
+          </svg>
+          <span class="ni-label">Insights</span>
+        </div>
+
+        <div class="ni" id="nav-achievements"
+          data-label="Achievements"
+          onclick="goView('achievements', this)">
+          <svg class="ni-icon" viewBox="0 0 18 18">
+            <path d="M9 2l1.8 3.6L15 6.5l-3 3 .7 4.2L9 12l-3.7 1.7.7-4.2-3-3 4.2-.9z"/>
+          </svg>
+          <span class="ni-label">Achievements</span>
+        </div>
+      </div>
+
+      <div class="sb-sec">
+        <div class="sb-sec-label">Categories</div>
+
+        <div class="ni" data-label="Work" onclick="setCat('Work', this)">
+          <div class="cat-dot" style="background:#2563eb"></div>
+          <span class="ni-label">Work</span>
+        </div>
+
+        <div class="ni" data-label="Personal" onclick="setCat('Personal', this)">
+          <div class="cat-dot" style="background:#7c3aed"></div>
+          <span class="ni-label">Personal</span>
+        </div>
+
+        <div class="ni" data-label="Health" onclick="setCat('Health', this)">
+          <div class="cat-dot" style="background:#10b981"></div>
+          <span class="ni-label">Health</span>
+        </div>
+
+        <div class="ni" data-label="Learning" onclick="setCat('Learning', this)">
+          <div class="cat-dot" style="background:#f59e0b"></div>
+          <span class="ni-label">Learning</span>
+        </div>
+      </div>
+
+    </div><!-- /sb-scroll -->
+
+    <div class="sb-foot">
+      <div class="user-row" onclick="openModal('aboutModal')">
+        <div class="avatar">AW</div>
+        <div class="u-info">
+          <div class="u-name">Anish Wani</div>
+          <div class="u-role">AI Developer</div>
+        </div>
+      </div>
+    </div>
+
+  </aside><!-- /sidebar -->
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="main">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="tb-title" id="tb-title">Tasks</div>
+
+      <!-- Dynamic slider — changes per view -->
+      <div id="slider-wrap"></div>
+
+      <!-- Search -->
+      <div class="search-wrap">
+        <div class="search-ico">
+          <svg viewBox="0 0 16 16"><circle cx="6.5" cy="6.5" r="4"/><path d="M10 10l3 3"/></svg>
+        </div>
+        <input class="search-inp" id="searchInput" placeholder="Search..."
+          oninput="renderTasks()"
+          onfocus="this.style.borderColor='var(--blue)'"
+          onblur="this.style.borderColor='var(--bdr2)'">
+      </div>
+
+      <!-- Icon buttons -->
+      <div class="tb-acts">
+        <button class="ib" onclick="enterFocus()" title="Focus Mode (F)">
+          <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="2"/><circle cx="8" cy="8" r="6"/></svg>
+        </button>
+        <button class="ib" onclick="toggleTheme()" title="Toggle Theme">
+          <svg viewBox="0 0 16 16">
+            <circle cx="8" cy="8" r="2.5"/>
+            <path d="M8 3v1M8 12v1M3 8H2M14 8h-1M4.9 4.9l-.7-.7M11.8 11.8l-.7-.7M4.9 11.1l-.7.7M11.8 4.2l-.7.7"/>
+          </svg>
+        </button>
+        <button class="ib" onclick="openModal('aboutModal')" title="About">
+          <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 7v5M8 5.5v.01"/></svg>
+        </button>
+        <button class="btn-new" onclick="openTaskModal()">
+          <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10"/></svg>
+          New Task
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ════ TASKS VIEW ════ -->
+      <div class="view on" id="view-tasks">
+        <div class="stats-row">
+          <div class="scard">
+            <div class="sc-lbl">Total Tasks</div>
+            <div class="sc-num" id="st-total">0</div>
+            <div class="sc-sub">All time</div>
+            <div class="sc-bar"><div class="sc-fill" style="width:100%"></div></div>
+          </div>
+          <div class="scard">
+            <div class="sc-lbl">Completed</div>
+            <div class="sc-num bl" id="st-done">0</div>
+            <div class="sc-sub">Tasks done</div>
+            <div class="sc-bar"><div class="sc-fill" id="sb-done" style="width:0%"></div></div>
+          </div>
+          <div class="scard">
+            <div class="sc-lbl">Pending</div>
+            <div class="sc-num" id="st-pend">0</div>
+            <div class="sc-sub">To complete</div>
+            <div class="sc-bar"><div class="sc-fill" id="sb-pend" style="width:0%"></div></div>
+          </div>
+          <div class="scard">
+            <div class="sc-lbl">Productivity</div>
+            <div class="sc-num bl" id="st-score">0%</div>
+            <div class="sc-sub">Completion rate</div>
+            <div class="sc-bar"><div class="sc-fill" id="sb-score" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <!-- Task panel -->
+          <div class="panel">
+            <div class="ph">
+              <div class="ph-title">My Tasks</div>
+              <div class="ph-right">
+                <select class="ms" id="sortSel" onchange="renderTasks()">
+                  <option value="created">Date Created</option>
+                  <option value="priority">Priority</option>
+                  <option value="due">Due Date</option>
+                </select>
+              </div>
+            </div>
+            <div class="f-tabs" id="fTabsRow">
+              <button class="ftab on" onclick="setFilt('all',this)">All</button>
+              <button class="ftab"    onclick="setFilt('active',this)">Active</button>
+              <button class="ftab"    onclick="setFilt('done',this)">Done</button>
+              <button class="ftab"    onclick="setFilt('high',this)">High Priority</button>
+              <button class="ftab"    onclick="setFilt('overdue',this)">Overdue</button>
+            </div>
+            <div class="quick-row">
+              <input class="qi" id="quickInput"
+                placeholder="Quick add — press Enter to create"
+                onkeydown="if(event.key==='Enter') quickAdd()">
+              <button class="qadd" onclick="quickAdd()">
+                <svg viewBox="0 0 14 14"><path d="M7 2v10M2 7h10"/></svg>
+              </button>
+            </div>
+            <div class="tlist" id="taskList"></div>
+          </div>
+
+          <!-- Right column -->
+          <div class="rcol">
+            <div class="pomo">
+              <div class="p-lbl">Pomodoro Timer</div>
+              <div class="p-time" id="pomoDisplay">25:00</div>
+              <div class="p-ctrls">
+                <button class="pb pb-main"  id="pomoBtn"  onclick="togglePomo()">Start</button>
+                <button class="pb pb-reset"               onclick="resetPomo()">Reset</button>
+              </div>
+              <div class="p-dots">
+                <div class="p-dot" id="pd0"></div>
+                <div class="p-dot" id="pd1"></div>
+                <div class="p-dot" id="pd2"></div>
+                <div class="p-dot" id="pd3"></div>
+              </div>
+            </div>
+
+            <div class="streak-card">
+              <div class="str-hd">
+                <div>
+                  <div class="sc-lbl" style="margin-bottom:2px">7-Day Streak</div>
+                  <div class="str-n" id="streakN">0</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="sc-lbl" style="margin-bottom:2px">Today</div>
+                  <div style="font-size:18px;font-weight:900;color:var(--text)" id="todayN">0</div>
+                </div>
+              </div>
+              <div class="s-row" id="streakRow"></div>
+              <div class="s-sub" id="streakSub">Complete tasks to build your streak</div>
+            </div>
+
+            <div class="ai-card">
+              <div class="ai-hd">
+                <div class="ai-ico">AI</div>
+                <div class="ai-ttl">Task Assistant</div>
+                <div class="ai-st"><div class="gd"></div> Ready</div>
+              </div>
+              <div class="ai-msgs" id="aiMsgs">
+                <div class="msg bot">Hi Anish! Set a goal and I'll break it into tasks. Try: "Learn Python in 30 days"</div>
+              </div>
+              <div class="ai-row">
+                <input class="ai-inp" id="aiInput"
+                  placeholder="Set a goal or ask for a plan..."
+                  onkeydown="if(event.key==='Enter') sendAI()">
+                <button class="ai-send" onclick="sendAI()">
+                  <svg viewBox="0 0 14 14"><path d="M2 7h10M8 3l4 4-4 4"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ DASHBOARD VIEW ════ -->
+      <div class="view" id="view-dashboard">
+        <div class="stats-row">
+          <div class="scard"><div class="sc-lbl">Completed Today</div><div class="sc-num bl" id="d-today">0</div><div class="sc-sub">Tasks</div></div>
+          <div class="scard"><div class="sc-lbl">Completion Rate</div><div class="sc-num bl" id="d-rate">0%</div><div class="sc-sub">Overall</div></div>
+          <div class="scard"><div class="sc-lbl">Focus Sessions</div><div class="sc-num" id="d-focus">0</div><div class="sc-sub">Pomodoros done</div></div>
+          <div class="scard"><div class="sc-lbl">Daily Goal</div><div class="sc-num" id="d-goal">5</div><div class="sc-sub">Target per day</div></div>
+        </div>
+        <div class="d2">
+          <div class="cpanel">
+            <div class="ph-title">Weekly Activity</div>
+            <div class="bars-wrap" id="chartBars"></div>
+            <div style="display:flex;gap:6px" id="chartLabels"></div>
+          </div>
+          <div class="cpanel">
+            <div class="ph-title" style="margin-bottom:12px">Category Breakdown</div>
+            <div id="catBreak"></div>
+          </div>
+        </div>
+        <div class="cpanel">
+          <div class="ph-title" style="margin-bottom:14px">Goals Progress</div>
+          <div class="goal-row">
+            <div class="goal-hd"><span class="goal-lb">Daily Goal — 5 tasks</span><span class="goal-vl" id="dg-txt">0 / 5</span></div>
+            <div class="goal-tr"><div class="goal-fi" id="dg-bar" style="width:0%"></div></div>
+          </div>
+          <div class="goal-row">
+            <div class="goal-hd"><span class="goal-lb">Weekly Goal — 25 tasks</span><span class="goal-vl" id="wg-txt">0 / 25</span></div>
+            <div class="goal-tr"><div class="goal-fi" id="wg-bar" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ INSIGHTS VIEW ════ -->
+      <div class="view" id="view-insights">
+        <div style="font-size:20px;font-weight:900;letter-spacing:-.8px;color:var(--text)">Productivity Insights</div>
+        <div class="i2">
+          <div class="cpanel">
+            <div class="ph-title" style="margin-bottom:14px">Performance Metrics</div>
+            <div id="metricsEl"></div>
+          </div>
+          <div class="cpanel">
+            <div class="ph-title" style="margin-bottom:14px">Activity Log</div>
+            <div id="logEl" style="max-height:360px;overflow-y:auto"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ ACHIEVEMENTS VIEW ════ -->
+      <div class="view" id="view-achievements">
+        <div style="font-size:20px;font-weight:900;letter-spacing:-.8px;color:var(--text)">Achievements</div>
+        <div class="cpanel">
+          <div class="ph-title" style="margin-bottom:14px">Earned Badges</div>
+          <div class="ag" id="achGrid"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+
+      <!-- Left: Wordmark -->
+      <div class="f-brand">
+        <div class="f-brand-name">TASKFLOW AI</div>
+        <div class="f-brand-sub">by Anish Inspires</div>
+      </div>
+
+      <!-- Middle: Credit + Social Icons -->
+      <div class="f-mid">
+        <span class="f-credit">Built with AI by <a href="https://www.linkedin.com/in/anish-wani-091071374" target="_blank" rel="noopener">Anish Wani</a></span>
+
+        <div class="f-icons">
+
+          <!-- GitHub -->
+          <a class="f-icon" href="https://github.com/AnishCodes-99" target="_blank" rel="noopener" title="GitHub — AnishCodes-99">
+            <svg viewBox="0 0 24 24">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+            </svg>
+          </a>
+
+          <!-- LinkedIn -->
+          <a class="f-icon" href="https://www.linkedin.com/in/anish-wani-091071374" target="_blank" rel="noopener" title="LinkedIn — Anish Wani">
+            <svg viewBox="0 0 24 24">
+              <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/>
+              <rect x="2" y="9" width="4" height="12"/>
+              <circle cx="4" cy="4" r="2"/>
+            </svg>
+          </a>
+
+          <!-- YouTube -->
+          <a class="f-icon" href="https://www.youtube.com/@AnishWani_1" target="_blank" rel="noopener" title="YouTube — @AnishWani_1">
+            <svg viewBox="0 0 24 24">
+              <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z"/>
+              <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" style="fill:currentColor;stroke:none"/>
+            </svg>
+          </a>
+
+          <!-- Instagram -->
+          <a class="f-icon" href="https://www.instagram.com/anish_inspires" target="_blank" rel="noopener" title="Instagram — @anish_inspires">
+            <svg viewBox="0 0 24 24">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Right: Keyboard hints -->
+      <div class="f-kbd">
+        <span class="kh"><kbd class="kbd">F</kbd> Focus</span>
+        <span class="kh"><kbd class="kbd">N</kbd> New</span>
+        <span class="kh"><kbd class="kbd">Esc</kbd> Close</span>
+      </div>
+
+    </footer>
+
+  </main>
+</div><!-- /app -->
+
+<script src="app.js"></script>
+</body>
+</html>
