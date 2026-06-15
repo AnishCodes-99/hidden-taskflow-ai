@@ -503,47 +503,79 @@ function renderAchievements() {
 }
 
 /* ══════════════════════════════════════
-   AI ASSISTANT
+   MOCK AI RESPONSE TEMPLATES
+══════════════════════════════════════ */
+const AI_RESPONSES = {
+  goal: [
+    "1. Define your end goal\n2. Break into weekly milestones\n3. Create daily actionable steps\n4. Track progress weekly\n5. Celebrate achievements",
+    "1. Research the topic thoroughly\n2. Create a learning schedule\n3. Practice regularly\n4. Review and assess progress\n5. Master the fundamentals",
+    "1. Set a specific deadline\n2. Identify key milestones\n3. Allocate resources\n4. Monitor progress\n5. Adjust as needed"
+  ],
+  learn: [
+    "1. Start with basics\n2. Practice daily\n3. Build projects\n4. Join communities\n5. Keep learning"
+  ],
+  productivity: [
+    "1. Plan your day\n2. Prioritize tasks\n3. Take breaks\n4. Stay focused\n5. Review results"
+  ],
+  default: [
+    "1. Break your goal into smaller tasks\n2. Set daily targets\n3. Track your progress\n4. Celebrate wins\n5. Stay consistent"
+  ]
+};
+
+function getAITemplate(msg) {
+  const lower = msg.toLowerCase();
+  if (lower.includes('learn')) return AI_RESPONSES.learn[0];
+  if (lower.includes('product') || lower.includes('focus')) return AI_RESPONSES.productivity[0];
+  if (lower.includes('goal')) return AI_RESPONSES.goal[Math.floor(Math.random() * AI_RESPONSES.goal.length)];
+  return AI_RESPONSES.default[0];
+}
+
+/* ══════════════════════════════════════
+   AI ASSISTANT (Mock Implementation)
 ══════════════════════════════════════ */
 async function sendAI() {
   const inp = document.getElementById('aiInput');
-  const msg = inp.value.trim(); if (!msg) return;
+  const msg = inp.value.trim();
+  if (!msg) return;
+  
   inp.value = '';
   const msgs = document.getElementById('aiMsgs');
   msgs.innerHTML += `<div class="msg usr">${esc(msg)}</div>`;
   msgs.innerHTML += `<div class="typing-row" id="aiTyping"><span></span><span></span><span></span></div>`;
   msgs.scrollTop = msgs.scrollHeight;
-  settings.aiUsed = (settings.aiUsed || 0) + 1; saveCfg();
+  
+  settings.aiUsed = (settings.aiUsed || 0) + 1;
+  saveCfg();
+  
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 1200));
+  
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6', max_tokens: 1000,
-        system: `You are TaskFlow AI, a premium productivity assistant built by Anish Wani (Anish Inspires).
-Help users break goals into actionable numbered tasks. Always format tasks as:
-1. Task name
-2. Task name
-Keep responses under 200 words. Be direct and motivating.`,
-        messages: [{ role: 'user', content: msg }]
-      })
-    });
-    const data = await res.json();
-    const typing = document.getElementById('aiTyping'); if (typing) typing.remove();
-    const reply  = data.content?.[0]?.text || 'Something went wrong. Try again.';
+    // Get mock response based on user input
+    const reply = getAITemplate(msg);
+    
+    const typing = document.getElementById('aiTyping');
+    if (typing) typing.remove();
+    
     msgs.innerHTML += `<div class="msg bot">${reply.replace(/\n/g,'<br>')}</div>`;
-    const lines = reply.match(/^\d+\.\s+.+/mg);
+    
+    // Parse tasks from response
+    const lines = reply.match(/^\d+\.\s+.+/gm);
     if (lines && lines.length >= 2) {
       const titles = lines.map(l => l.replace(/^\d+\.\s+/, '').trim());
       msgs.innerHTML += `<div class="msg add" onclick='addAITasks(${JSON.stringify(titles)})'>+ Add ${titles.length} tasks to your list</div>`;
     }
+    
     msgs.scrollTop = msgs.scrollHeight;
-    log('AI: ' + msg.slice(0,50));
+    log('AI: ' + msg.slice(0, 50));
   } catch(e) {
-    const t = document.getElementById('aiTyping'); if (t) t.remove();
-    msgs.innerHTML += `<div class="msg bot">Network error. Check connection and try again.</div>`;
+    const t = document.getElementById('aiTyping');
+    if (t) t.remove();
+    msgs.innerHTML += `<div class="msg bot">✓ Mock AI: Feature working offline. Add suggested tasks or try a new goal!</div>`;
     msgs.scrollTop = msgs.scrollHeight;
   }
 }
+
 function addAITasks(titles) {
   titles.forEach(t => tasks.unshift({
     id: uid(), title: t, priority: 'medium', category: 'Learning',
